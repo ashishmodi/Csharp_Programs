@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Indexers; //my namespace
@@ -18,6 +18,13 @@ namespace BasicStuff
             Console.WriteLine("Setting employee names using indexers");
             c[1] = "Ashish Modi";
             Console.WriteLine(c[1]);
+
+            Console.WriteLine("No of Male employees = " + c["Male"]);
+            Console.WriteLine("No of Female employees = " + c["Female"]);
+            c["Male"] = "Female";
+            Console.WriteLine("After changing all employees to female employees");
+            Console.WriteLine("No of Male employees = " + c["Male"]);
+            Console.WriteLine("No of Female employees = " + c["Female"]);
         }
     }
 }
@@ -52,6 +59,24 @@ namespace Indexers
             set
             {
                 listEmployees.FirstOrDefault(emp => emp.EmployeeId == empId).Name = value;
+            }
+        }
+
+        public string this[string gender]
+        {
+            get
+            {
+                return listEmployees.Count(emp => emp.Gender == gender).ToString();
+            }
+            set
+            {
+                foreach (Employee e in listEmployees)
+                {
+                    if (e.Gender == gender)
+                    {
+                        e.Gender = value;
+                    }
+                }
             }
         }
     }
