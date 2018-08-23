@@ -58,8 +58,61 @@ namespace ThreadingDemos
             // helper class and use the ThreadStart delegate to invoke that fn.
             TypesafeNumber tn = new TypesafeNumber(8);
             Thread t1 = new Thread(tn.PrintRange);
-            t1.Start();            
+            t1.Start();
         }
+
+        private void btnThreadCallback_Click(object sender, EventArgs e)
+        {
+            int no = Convert.ToInt32(txtEnterNo.Text);
+
+            CheckPrimeCallback callback = new CheckPrimeCallback(PrintIsPrimeMessageBox);
+
+            PrimeNoCallbackDemo primeCallbackDemo = new PrimeNoCallbackDemo(no, callback);
+
+            Thread t = new Thread(primeCallbackDemo.ComputePrimeCheckOperation);
+            t.Start();
+            t.Join(15000);      // Waits for 15 sec before showing below message
+            MessageBox.Show("Event finished");
+        }
+
+        private void PrintIsPrimeMessageBox(bool bIsPrime)
+        {            
+            if (bIsPrime)
+                MessageBox.Show("No is Prime");
+            else
+                MessageBox.Show("No is Not Prime");
+        }
+    }
+
+    public delegate void CheckPrimeCallback(bool bIsPrimeNo);
+
+    class PrimeNoCallbackDemo
+    {
+        int m_iNumber = 0;
+        CheckPrimeCallback m_delCheckPrimeCallback;
+
+        public PrimeNoCallbackDemo(int iNumber, CheckPrimeCallback callback)
+        {
+            m_iNumber = iNumber;
+            m_delCheckPrimeCallback = callback;
+        }
+
+        public void ComputePrimeCheckOperation()
+        {
+            bool bIsPrime = true;
+            for (int i = 2; i <= m_iNumber/2; i++)
+            {
+                if(m_iNumber % i == 0)
+                {
+                    bIsPrime = false;
+                    break;
+                }
+            }
+
+            if (m_delCheckPrimeCallback != null)
+                m_delCheckPrimeCallback(bIsPrime);
+        }
+
     }
 
     class Number : Form1
